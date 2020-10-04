@@ -5,58 +5,100 @@ import App from './App';
 
 Enzyme.configure({ adapter: new EnzymeAdapter() });
 
- /**
-  * Factory function to create a ShallowWrapper for the App component.
-  * @function setup
-  * @param {object} props - Component props specific to this setup.
-  * @returns {ShallowWrapper}
-  */
- const setup = (props={}) => {
-  return shallow(<App { ...props }/>)
-}
+/**
+ * Function to create ShallowWrapper for the App component.
+ * @function setup
+ */
+const setup = () => shallow(<App />);
 
 /**
- * Return ShallowWrapper containing node(s) with the given data-test value.
- * @param {ShallowWrapper} wrapper - Enzyme shallow wrapper to search within.
- * @param {string} val - Value of data-test c1scoL0ve!
- * 
+ * Function to find element/node bt Test attribute name.
+ * @function findByTestAttr
  */
-const findByTestAttr = (wrapper, val) => {
-  return wrapper.find(`[data-test="${val}"]`);
-}
+const findByTestAttr = (wrapper, name) => wrapper.find(`[data-test='${name}']`);
 
-test('renders without error', () => {
+test('App component renders without error', () => {
   const wrapper = setup();
   const appComponent = findByTestAttr(wrapper, 'component-app');
   expect(appComponent.length).toBe(1);
-});
+})
 
-test('renders increment button', () => {
+test('App renders a button', () => {
   const wrapper = setup();
   const button = findByTestAttr(wrapper, 'increment-button');
   expect(button.length).toBe(1);
-});
+})
 
-test('renders counter display', () => {
+test('renders a decrement counter button', () => {
   const wrapper = setup();
-  const counterDisplay = findByTestAttr(wrapper, 'counter-display');
-  expect(counterDisplay.length).toBe(1);
-});
+  const decrementButton = findByTestAttr(wrapper, 'decrement-button');
+  expect(decrementButton.length).toBe(1)
+})
 
-test('counter starts at 0', () => {
+test('App renders a counter display', () => {
+  const wrapper = setup();
+  const counter = findByTestAttr(wrapper, 'counter-display');
+  expect(counter.length).toBe(1);
+})
+
+test('App counter starts at 0', () => {
   const wrapper = setup();
   const count = findByTestAttr(wrapper, 'count').text();
-  expect(count).toBe("0");  // do this first with an integer and show failure!
-});
+  expect(count).toBe('0');
+})
 
-test('counter increments when button is clicked', () => {
+test('Clicking on button increments counter display', () => {
   const wrapper = setup();
+  const incrementButton = findByTestAttr(wrapper, 'increment-button');
+  incrementButton.simulate('click');
   
-  // find button and click
-  const button = findByTestAttr(wrapper, 'increment-button');
-  button.simulate('click');
-
-  // check the counter
   const count = findByTestAttr(wrapper, 'count').text();
-  expect(count).toBe("1");
+  expect(count).toBe('1');
+});
+
+test('Clicking on decrement button should decrement count', () => {
+  const wrapper = setup();
+  const incrementButton = findByTestAttr(wrapper, 'increment-button');
+  incrementButton.simulate('click');
+  incrementButton.simulate('click');
+  
+  let count = findByTestAttr(wrapper, 'count').text();
+  expect(count).toBe('2');
+
+  const decrementButton = findByTestAttr(wrapper, 'decrement-button');
+  
+  decrementButton.simulate('click');
+  count = findByTestAttr(wrapper, 'count').text()
+
+  expect(count).toBe('1');
+});
+
+test('clicking decrement button at 0 counter should display error', () => {
+  const wrapper = setup();
+  const decrementButton = findByTestAttr(wrapper, 'decrement-button');
+
+  decrementButton.simulate('click');
+
+  const counterError = findByTestAttr(wrapper, 'counter-error');
+
+  expect(counterError.length).toBe(1);
+});
+
+
+
+test('clicking increment button in error state should remove error', () => {
+  const wrapper = setup();
+  const decrementButton = findByTestAttr(wrapper, 'decrement-button');
+
+  decrementButton.simulate('click');
+
+  let counterError = findByTestAttr(wrapper, 'counter-error');
+
+  expect(counterError.length).toBe(1);
+
+  const incrementButton = findByTestAttr(wrapper, 'increment-button');
+  incrementButton.simulate('click');
+
+  counterError = findByTestAttr(wrapper, 'counter-error');
+  expect(counterError.length).toBe(0)
 });

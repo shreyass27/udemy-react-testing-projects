@@ -1,22 +1,37 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 function App() {
   const [count, setCount] = React.useState(0);
+  const [hasError, setHasError] = React.useState(false);
+
+  const incrementCounter = React.useCallback(function () {
+    if (hasError) {
+      setHasError(false);
+    }
+    setCount(count => count + 1);
+  }, [hasError, setHasError, setCount]);
+
+  const decrementCounter = React.useCallback(function () {
+    if (count === 0) {
+      setHasError(true);
+    } else {
+      setCount(count => count - 1);
+    }
+  }, [count, setCount, setHasError]);
 
   return (
-    <div data-test="component-app" className="App">
+    <div data-test="component-app">
       <h1 data-test="counter-display">
-        The counter is currently&nbsp; 
-        <span data-test="count">{count}</span>
+        Counter is currently: &nbsp
+      <span data-test="count">{count}</span>
       </h1>
-      <button
-        data-test="increment-button"
-        onClick={() => setCount(count + 1)}
-      >
-        Increment counter
-      </button>
+
+
+      {hasError && <h3 data-test='counter-error'>The counter cannot be less than 0</h3>}
+
+      <button data-test="increment-button" onClick={incrementCounter}>Increment</button>
+      <button data-test="decrement-button" onClick={decrementCounter}>Decrement</button>
     </div>
   );
 }
