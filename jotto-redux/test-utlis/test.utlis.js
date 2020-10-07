@@ -1,4 +1,13 @@
+import { createStore, applyMiddleware } from 'redux';
 import checkPropTypes from 'check-prop-types';
+import rootStore from '../src/redux/reducers';
+import {middlewares} from '../src/redux/configureStore';
+
+export const storeFactory = (initialState) => {
+    const createStoreWithMiddleware = applyMiddleware(...middlewares)(createStore);
+    return createStoreWithMiddleware(rootStore, initialState);
+}
+
 
 /**
  * Return ShallowWrapper containing node(s) with the given data-test value.

@@ -1,16 +1,22 @@
 import React, { Component } from 'react';
 import './App.css';
 
-class App extends Component {
+import GuessedWords from './GussedWords/GussedWords';
+import Congrats from './Congrats/Congrats';
 
-  componentDidMount() {
-    // get the secret word
-    this.props.getSecretWord();
-  }
+class App extends Component {
 
   render() {
     return (
       <div className="container">
+        <h1>Jotto</h1>
+
+        <Congrats success={true} />
+        <GuessedWords guessedWords={[
+        { guessedWord: 'train', letterMatchCount: 3 },
+        { guessedWord: 'agile', letterMatchCount: 1 },
+        { guessedWord: 'party', letterMatchCount: 5 },
+    ]} />
       </div>
     );
   }
