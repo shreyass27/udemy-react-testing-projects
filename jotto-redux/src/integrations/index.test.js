@@ -1,6 +1,6 @@
 import { storeFactory } from '../../test-utlis/test.utlis';
-import { guessWord } from '../redux/actions'
-
+import { guessWord, getSecretWord } from '../redux/actions'
+import moxios from 'moxios';
 
 describe('guessWord action dispatcher', () => {
     const secretWord = 'party';
@@ -75,4 +75,36 @@ describe('guessWord action dispatcher', () => {
             expect(newState).toEqual(expectedState);
         });
     });
+});
+
+
+
+describe('getSecretWord action creator', () => {
+    beforeEach(() => {
+        moxios.install();
+    })
+    afterEach(() => {
+        moxios.uninstall();
+    })
+
+    test('adds response word to state', () => {
+        const secretWord = 'party';
+        const store = storeFactory({ secretWord: '' });
+
+        moxios.wait(() => {
+            const request = moxios.requests.mostRecent();
+
+            request.respondWith({
+                status: 200,
+                response: secretWord
+            });
+        });
+
+        return store.dispatch(getSecretWord())
+            .then(() => {
+                const newState = store.getState().secretWord;
+                expect(newState).toEqual(secretWord);
+            })
+    })
+
 });
